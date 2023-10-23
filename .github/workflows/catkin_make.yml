@@ -9,7 +9,7 @@ defaults:
     shell: /bin/bash -leo pipefail {0}
 
 jobs:
-  build:
+  catkin-cmake:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
