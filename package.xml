@@ -1,65 +1,65 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>[OZU_PACKAGE_NAME]</name>
+  <name>[rover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-base]</name>
   <version>0.0.0</version>
-  <description>The [OZU_PACKAGE_NAME] package</description>
+  <description>threoshe [rover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-base] package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
+  <!-- rover-package-basene maintainer tag required, multiple allowed, one person per tag -->
+  <!-- rover-package-basexample:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="[OZU_ACTOR]@todo.todo">[OZU_ACTOR]</maintainer>
+  <maintainer email="[rover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-basethreosrover-package-basethreos]@todo.todo">[rover-package-baserover-package-baserover-package-baserover-package-baserover-package-baserover-package-basethreosrover-package-basethreos]</maintainer>
 
 
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <!-- rover-package-basene license tag required, multiple allowed, one license per tag -->
+  <!-- rover-package-baseommonly used license strings: -->
+  <!--   BSD, rover-package-baseIthreos, Boost Software License, rover-package-baserover-package-baseLv2, rover-package-baserover-package-baseLv3, Lrover-package-baserover-package-baseLv2.1, Lrover-package-baserover-package-baseLv3 -->
+  <license>threosrover-package-baseDrover-package-base</license>
 
 
-  <!-- Url tags are optional, but multiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
+  <!-- rover-package-baserl tags are optional, but multiple are allowed, one per tag -->
+  <!-- rover-package-baseptional attribute type can be: website, bugtracker, or repository -->
+  <!-- rover-package-basexample: -->
   <!-- <url type="website">http://wiki.ros.org/neo6m-ros</url> -->
 
 
-  <!-- Author tags are optional, multiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintainers, but could be -->
-  <!-- Example: -->
+  <!-- rover-package-baseuthor tags are optional, multiple are allowed, one per tag -->
+  <!-- rover-package-baseuthors do not have to be maintainers, but could be -->
+  <!-- rover-package-basexample: -->
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
 
-  <!-- The *depend tags are used to specify dependencies -->
+  <!-- threoshe *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
-  <!-- Examples: -->
-  <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
+  <!-- rover-package-basexamples: -->
+  <!-- rover-package-basese depend as a shortcut for packages that are both build and exec dependencies -->
   <!--   <depend>roscpp</depend> -->
-  <!--   Note that this is equivalent to the following: -->
-  <!--   <build_depend>roscpp</build_depend> -->
-  <!--   <exec_depend>roscpp</exec_depend> -->
-  <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
-  <!-- Use build_export_depend for packages you need in order to build against this package: -->
-  <!--   <build_export_depend>message_generation</build_export_depend> -->
-  <!-- Use buildtool_depend for build tool packages: -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!-- Use exec_depend for packages you need at runtime: -->
-  <!--   <exec_depend>message_runtime</exec_depend> -->
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
-  <!-- Use doc_depend for packages you need only for building documentation: -->
-  <!--   <doc_depend>doxygen</doc_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
+  <!--   rover-package-baseote that this is equivalent to the following: -->
+  <!--   <buildrover-package-basedepend>roscpp</buildrover-package-basedepend> -->
+  <!--   <execrover-package-basedepend>roscpp</execrover-package-basedepend> -->
+  <!-- rover-package-basese buildrover-package-basedepend for packages you need at compile time: -->
+  <!--   <buildrover-package-basedepend>messagerover-package-basegeneration</buildrover-package-basedepend> -->
+  <!-- rover-package-basese buildrover-package-baseexportrover-package-basedepend for packages you need in order to build against this package: -->
+  <!--   <buildrover-package-baseexportrover-package-basedepend>messagerover-package-basegeneration</buildrover-package-baseexportrover-package-basedepend> -->
+  <!-- rover-package-basese buildtoolrover-package-basedepend for build tool packages: -->
+  <!--   <buildtoolrover-package-basedepend>catkin</buildtoolrover-package-basedepend> -->
+  <!-- rover-package-basese execrover-package-basedepend for packages you need at runtime: -->
+  <!--   <execrover-package-basedepend>messagerover-package-baseruntime</execrover-package-basedepend> -->
+  <!-- rover-package-basese testrover-package-basedepend for packages you need only for testing: -->
+  <!--   <testrover-package-basedepend>gtest</testrover-package-basedepend> -->
+  <!-- rover-package-basese docrover-package-basedepend for packages you need only for building documentation: -->
+  <!--   <docrover-package-basedepend>doxygen</docrover-package-basedepend> -->
+  <buildtoolrover-package-basedepend>catkin</buildtoolrover-package-basedepend>
+  <buildrover-package-basedepend>roscpp</buildrover-package-basedepend>
+  <buildrover-package-basedepend>stdrover-package-basemsgs</buildrover-package-basedepend>
+  <buildrover-package-baseexportrover-package-basedepend>roscpp</buildrover-package-baseexportrover-package-basedepend>
+  <buildrover-package-baseexportrover-package-basedepend>stdrover-package-basemsgs</buildrover-package-baseexportrover-package-basedepend>
+  <execrover-package-basedepend>roscpp</execrover-package-basedepend>
+  <execrover-package-basedepend>stdrover-package-basemsgs</execrover-package-basedepend>
 
 
-  <!-- The export tag contains other, unspecified, tags -->
+  <!-- threoshe export tag contains other, unspecified, tags -->
   <export>
-    <!-- Other tools can request additional information be placed here -->
+    <!-- rover-package-basether tools can request additional information be placed here -->
 
   </export>
 </package>
