@@ -1,7 +1,7 @@
-name: Initialize Package
+name: Set Package Variables
 
 on:
-  fork:
+  push:
     branches: [ "main" ]
 
 defaults:
