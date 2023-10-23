@@ -1,4 +1,4 @@
-name: Catkin Make
+name: Initialize Package
 
 on:
   fork:
