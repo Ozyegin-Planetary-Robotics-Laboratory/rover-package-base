@@ -1,0 +1,33 @@
+name: Catkin Make
+
+on:
+  fork:
+    branches: [ "main" ]
+
+defaults:
+  run:
+    shell: /bin/bash -leo pipefail {0}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Substring Repository Name
+        uses: bhowell2/github-substring-action@1.0.2
+        id: package_name
+        with:
+          value: ${{github.repository}}
+          index_of_str: "/"
+
+      - name: Set Package Name Variable
+        run: sed -i 's/[OZU_PACKAGE_NAME]/${{steps.package_name.outputs.substring}}/g' *
+
+      - name: Set Actor Variable
+        run: sed -i 's/[OZU_ACTOR]/${{github.actor}}/g' *
+
+      - name: GitHub Commit Push File
+        uses: maxgfr/github-commit-push-file@v0.0.3
+        with:
+          commit_name: 'Update package name and actor'
