@@ -1,0 +1,30 @@
+name: Catkin Make
+
+on:
+  push:
+    branches: [ "main" ]
+
+defaults:
+  run:
+    shell: /bin/bash -leo pipefail {0}
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Substring Repository Name
+        uses: bhowell2/github-substring-action@1.0.2
+        id: package_name
+        with:
+          value: ${{github.repository}}
+          index_of_str: "/"
+
+      - name: Move Package to Catkin Workspace
+        run: cp -r ./ /home/exo/catkin_ws/src/${{steps.package_name.outputs.substring}}
+
+      - name: Build
+        working-directory: /home/exo/catkin_ws
+        run: source /opt/ros/melodic/setup.bash && source /home/exo/catkin_ws/devel/setup.bash && catkin_make --only-pkg-with-deps ${{steps.package_name.outputs.substring}}
+        shell: bash
