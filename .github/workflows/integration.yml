@@ -1,4 +1,4 @@
-name: Set Package Variables
+name: Catkin Make
 
 on:
   push:
@@ -9,7 +9,8 @@ defaults:
     shell: /bin/bash -leo pipefail {0}
 
 jobs:
-  build:
+  initialize:
+    name: Initialize Integration and Set Variables
     if: github.repository != 'Ozyegin-Planetary-Robotics-Laboratory/rover-package-base'
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +22,7 @@ jobs:
         with:
           value: ${{github.repository}}
           index_of_str: "/"
-      
+
       - name: Set Package Name Variable
         run: sed -i 's|<OZU_PACKAGE_NAME>|${{ steps.package_name.outputs.substring }}|' ./CMakeLists.txt ./package.xml
 
@@ -36,3 +37,25 @@ jobs:
           commit-message: 'Update package name and actor'
           name: OzU Rover GitHub Actions Initializer
           email: ozu-rover-github-actions@xreos.co
+  catkin-cmake:
+    name: Build and Deploy Package
+    needs: initialize
+    if: github.repository != 'Ozyegin-Planetary-Robotics-Laboratory/rover-package-base'
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Substring Repository Name
+        uses: bhowell2/github-substring-action@1.0.2
+        id: package_name
+        with:
+          value: ${{github.repository}}
+          index_of_str: "/"
+
+      - name: Move Package to Catkin Workspace
+        run: cp -r ./ /home/exo/catkin_ws/src/${{steps.package_name.outputs.substring}}
+
+      - name: Build
+        working-directory: /home/exo/catkin_ws
+        run: source /opt/ros/melodic/setup.bash && source /home/exo/catkin_ws/devel/setup.bash && catkin_make --only-pkg-with-deps ${{steps.package_name.outputs.substring}}
+        shell: bash
