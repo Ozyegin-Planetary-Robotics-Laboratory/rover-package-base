@@ -27,9 +27,11 @@ jobs:
       - name: Set Actor Variable
         run: sed -i 's/[OZU_ACTOR]/${{github.actor}}/' ./CMakeLists.txt ./package.xml
 
-      - name: Commit & Push changes
-        uses: Andro999b/push@v1.3
+      - name: Git Commit and Push
+        uses: github-actions-x/commit@v2.9
         with:
-          github_token: ${{ secrets.INITIALIZER_TOKEN }}
-          message: 'Update package name and actor'
-          branch: 'main'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'main'
+          commit-message: 'Update package name and actor'
+          name: OzU Rover GitHub Actions Initializer
+          email: ozu-rover-github-actions@xreos.co
