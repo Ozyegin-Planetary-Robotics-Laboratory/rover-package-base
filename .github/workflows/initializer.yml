@@ -22,7 +22,7 @@ jobs:
           index_of_str: "/"
 
       - name: Set Package Name Variable
-        run: sed -i 's/[OZU_PACKAGE_NAME]/${{steps.package_name.outputs.substring}}' CMakeLists.txt packages.xml
+        run: sed -i 's/[OZU_PACKAGE_NAME]/${{steps.package_name.outputs.substring}}/' CMakeLists.txt packages.xml
 
       - name: Set Actor Variable
         run: sed -i 's/[OZU_ACTOR]/${{github.actor}}' CMakeLists.txt packages.xml
