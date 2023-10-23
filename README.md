@@ -1,27 +1,12 @@
-# Locator for OzU Rover
+# OzU Rover Base Package for Continuous Integration
 
-This program listens to the specified serial UART port, parses NMEA data, and publishes Latitude/Longitude information to the topic "gps".
+This is a base repository for any OzU Rover package that will implement CI/CD on the Rover.
 
-## About
+## How to Create a Package
 
-This code is based on an older C class I wrote for STM32 platform. The parser was designed to be memory-efficient and has been previously tested with GYNEO6 GPS.
+1. Fork this repository and create a new repository in OzU Planetary Robotics Lab organization.
+2. Rename the directory as your package (and repo) name.
+3. Clone the repo and `cd` into the repo directory
+4. Push your code to your new repository in GitHub to deploy it to the rover.
 
-Processing of NMEA messages is done char-by-char. The parser holds a state that resets when `$` character is received. For now, the program only parses `GPGLL` messages and ignores any other NMEA content.
-
-## Requirements
-
-* ROS Melodic+
-
-## Building
-
-`catkin_make`
-
-If you only want to compile this package, then
-
-`catkin_make --only-pkg-with-deps neo6m-ros`
-
-## Usage
-    
-`rosrun neo6m-ros gps_interface PORT`
-
-`PORT` is the serial port that GPS UART is linked to. Such as /dev/ttyTHS0
+## 
