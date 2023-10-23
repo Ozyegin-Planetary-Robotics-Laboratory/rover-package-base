@@ -22,10 +22,10 @@ jobs:
           index_of_str: "/"
 
       - name: Set Package Name Variable
-        run: sed -i 's/[OZU_PACKAGE_NAME]/${{steps.package_name.outputs.substring}}/g' *
+        run: sed -i 's/[OZU_PACKAGE_NAME]/${{steps.package_name.outputs.substring}}' CMakeLists.txt packages.xml
 
       - name: Set Actor Variable
-        run: sed -i 's/[OZU_ACTOR]/${{github.actor}}/g' *
+        run: sed -i 's/[OZU_ACTOR]/${{github.actor}}' CMakeLists.txt packages.xml
 
       - name: GitHub Commit Push File
         uses: maxgfr/github-commit-push-file@v0.0.3
