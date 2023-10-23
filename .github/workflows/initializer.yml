@@ -22,10 +22,10 @@ jobs:
           index_of_str: "/"
       
       - name: Set Package Name Variable
-        run: sed -i 's/<OZU_PACKAGE_NAME>/${{ steps.package_name.outputs.substring }}/g' ./CMakeLists.txt ./package.xml
+        run: sed -i 's|<OZU_PACKAGE_NAME>|${{ steps.package_name.outputs.substring }}|' ./CMakeLists.txt ./package.xml
 
       - name: Set Actor Variable
-        run: sed -i 's/<OZU_ACTOR>/${{ github.actor }}/g' ./CMakeLists.txt ./package.xml
+        run: sed -i 's|<OZU_ACTOR>|${{ github.actor }}|' ./CMakeLists.txt ./package.xml
 
       - name: Git Commit and Push
         uses: github-actions-x/commit@v2.9
