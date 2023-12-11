@@ -1,113 +1,120 @@
 import sys
-
-import cv2
-import mediapipe as mp
 import time
+import math
+from typing import Required
+from TMotorCANControl.servo_can import TMotorManager_servo_can
 import rospy
-import moveit_commander
-import geometry_msgs.msg
-import cv2
-from cv_bridge import CvBridge, CvBridgeError
+from sensor_msgs.msg import Joy
 
-cap = cv2.VideoCapture(0)
 
-mpHands = mp.solutions.hands
-hands = mpHands.Hands(static_image_mode=False,
-                      max_num_hands=2,
-                      min_detection_confidence=0.5,
-                      min_tracking_confidence=0.5)
-mpDraw = mp.solutions.drawing_utils
+class MotorControlState:
+    def __init__(self, rotation, speed, valid_until):
+        self.rotation = rotation
+        self.speed = speed
+        self.valid_until = valid_until
 
-pTime = 0
-cTime = 0
+
+default_state = MotorControlState(0, 0, -1)
+state = default_state
+
+
+def millis():
+    return round(time.time() * 1000)
+
+
+def emit(value):
+    global state
+    state = value
+
+
+def is_message_valid():
+    return millis() > state.valid_until
+
+
+def joy_callback(data):
+    global ctrl_flag
+    global ctrl_valid_until
+    global ctrl_user_timeout_millis
+    current_millis = millis()
+    ctrl_flag = 2
+    ctrl_valid_until = current_millis + ctrl_user_timeout_millis
+    global state
+    global state_timeout_millis
+    rotation = data.axes[0]
+    speed = data.axes[1]
+    valid_until = current_millis + state_timeout_millis
+    emit(MotorControlState(rotation, speed, valid_until))
+    print(rotation, speed, valid_until)
+
+
+def msg_callback(data):
+    global ctrl_flag
+    global ctrl_valid_until
+    global ctrl_user_timeout_millis
+    current_millis = millis()
+    if ctrl_flag > 1 and ctrl_valid_until >= current_millis:
+        return
+    ctrl_flag = 1
+    global state
+    global state_timeout_millis
+    rotation = data.axes[0]
+    speed = data.axes[1]
+    valid_until = current_millis + state_timeout_millis
+    emit(MotorControlState(rotation, speed, valid_until))
+    print(rotation, speed, valid_until)
+
+
+def calculate_velocity_targets(rotation, speed):
+    # Rover width: 64cm, wheel diameter: 30cm, distance between two wheels at the same side: 96cm
+    velocity_diff = math.tan(rotation) * speed
+    velocity_left_group = (speed + velocity_diff) / 2
+    velocity_right_group = -velocity_diff + velocity_left_group
+    return [velocity_right_group, velocity_left_group]
+
+
+def update_motor_collection(motor_collection, state):
+    velocities = calculate_velocity_targets(state.rotation, state.speed)
+    motor_collection[0].set_velocity(velocities[0])
+    motor_collection[1].set_velocity(velocities[1])
+    motor_collection[2].set_velocity(velocities[0])
+    motor_collection[3].set_velocity(velocities[1])
+    for motor in motor_collection:
+        motor.update()
+
+
+def tick(motor_collection):
+    global state
+    if is_message_valid():
+        update_motor_collection(motor_collection, state)
+    else:
+        update_motor_collection(motor_collection, default_state)
+
+
+ctrl_flag = 0  # 0: unoccupied, 1: system, 2: user (joystick)
+ctrl_valid_until = 0
+ctrl_user_timeout_millis = 5000
+
+state_timeout_millis = 100
+
+rover_width = 64 * 0.01
+rover_height = 96 * 0.01
+wheel_diameter = 30 * 0.01
+
+wheel_distance_from_center = math.sqrt(rover_width ** 2 + rover_height ** 2) / 2
 
 try:
-    moveit_commander.roscpp_initialize(sys.argv)
-    robot = moveit_commander.RobotCommander()
-    group_name = robot.get_group_names()[0]
-    print(group_name)
-    move_group = moveit_commander.MoveGroupCommander(group_name)
-    scene = moveit_commander.PlanningSceneInterface()
+    rospy.init_node("ozurover-locomotion", anonymous=True)
+    subscription = rospy.Subscriber("/joy", Joy, joy_callback)
+    with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=1) as motor1:
+        with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=2) as motor2:
+            with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
+                with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=4) as motor4:
+                    motor_collection = [motor1, motor2, motor3, motor4]  # R, L, R, L
+                    for motor in motor_collection:
+                        motor.enter_velocity_control()
+                    while rospy.is_shutdown() is False:
+                        tick(motor_collection)
 
-    # Add the ground plane as collision object
-    plane_pose = geometry_msgs.msg.PoseStamped()
-    plane_pose.header.frame_id = "world"
-    plane_pose.pose.orientation.w = 1.0
-    scene.add_plane("ground_plane", plane_pose)
-
-    move_group.set_max_acceleration_scaling_factor(1)
-    move_group.set_max_velocity_scaling_factor(1)
-
-    target_joint_states = [
-        [1.207, -1.731, 1.205, -1.642, -1.355, -0.295],
-        [2.261, -1.088, 0.997, -1.732, -2.251, 0.601],
-        [0.628, -1.073, 1.032, -1.471, -0.870, -1.136],
-        [1.458, -1.341, 2.492, -3.641, -1.558, -0.044],
-        [1.458, -0.720, 0.531, -1.635, -1.559, -0.043],
-    ]
-
-    ki = 0
-    while True:
-        success, img = cap.read()
-        img = cv2.flip(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), 1)
-        imgRGB = img
-        results = hands.process(imgRGB)
-        # print(results.multi_hand_landmarks)
-
-        mx = -1
-        my = -1
-        tx = -1
-        ty = -1
-        nx = -1
-        ny = -1
-        kx = -1
-        ky = -1
-
-        if results.multi_hand_landmarks:
-            for handLms in results.multi_hand_landmarks:
-                for id, lm in enumerate(handLms.landmark):
-                    print(id, lm)
-                    h, w, c = img.shape
-                    cx, cy = int(lm.x * w), int(lm.y * h)
-                    if id == 4:
-                        tx = cx
-                        ty = cy
-                    if id == 12:
-                        mx = cx
-                        my = cy
-                    if id == 1:
-                        nx = cx
-                        ny = cy
-                    if id == 17:
-                        kx = cx
-                        ky = cy
-
-                    # if id ==0:
-                    cv2.putText(img, str(id), (cx, cy), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-                    cv2.circle(img, (cx, cy), 3, (255, 0, 255), cv2.FILLED)
-
-                mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
-        cTime = time.time()
-        fps = 1 / (cTime - pTime)
-        pTime = cTime
-
-        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-
-        if nx != kx:
-            dist = int((abs(mx - tx) + abs(my - ty)) / (abs(nx - kx) + abs(ny - ky)) * 100)
-            if dist < 80:
-                print(ki)
-                success = False
-                move_group.set_joint_value_target(target_joint_states[ki])
-                success, trajectory, planning_time, error_code = move_group.plan()
-                move_group.execute(trajectory, wait=False)
-                ki = ki + 1
-                ki = (ki + 1) % 5
-
-
-
-        cv2.imshow("Image", img)
-        cv2.waitKey(1)
+                        time.sleep(0.02)
 except KeyboardInterrupt:
-    cap.release()
     sys.exit(0)
