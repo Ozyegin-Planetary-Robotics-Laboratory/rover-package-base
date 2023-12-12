@@ -6,5 +6,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="workspace" level="project" />
     <orderEntry type="library" name="ROS" level="project" />
+    <orderEntry type="library" name="workspace" level="project" />
+    <orderEntry type="library" name="ROS" level="project" />
+    <orderEntry type="library" name="workspace" level="project" />
+    <orderEntry type="library" name="ROS" level="project" />
   </component>
 </module>

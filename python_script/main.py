@@ -2,9 +2,15 @@ import sys
 import time
 import math
 from typing import Required
+
+import requests
 from TMotorCANControl.servo_can import TMotorManager_servo_can
 import rospy
+from multiprocessing import Process
 from sensor_msgs.msg import Joy
+
+telemetry_server = "localhost:8080"
+telemetry_uri = "/rover-data"
 
 
 class MotorControlState:
@@ -20,6 +26,9 @@ state = default_state
 
 def millis():
     return round(time.time() * 1000)
+
+
+start_millis = millis()
 
 
 def emit(value):
@@ -90,6 +99,52 @@ def tick(motor_collection):
         update_motor_collection(motor_collection, default_state)
 
 
+def get_motor_state_map(motor):
+    return {"current": motor.get_current_qaxis_amps(), "speed": motor.get_motor_velocity_radians_per_second(),
+            "temperature": float(motor.temperature)}
+
+
+def get_motor_collection_state():
+    global motor_collection
+    state_map = []
+    for i, m in enumerate(motor_collection):
+        state_map += get_motor_state_map(m)
+    return state_map
+
+
+def telemetryTask():
+    global telemetry_uri
+    global telemetry_server
+    global start_millis
+    global ctrl_flag
+    while rospy.is_shutdown() is False:
+        epoch = millis()
+        delta_t = epoch - start_millis
+        motor_data = {
+            "LocoMotorData": get_motor_collection_state(),
+            "Mode": "idle",
+            "InitialModeIndex": 0,
+            "Connected": True,
+            "BatteryVoltage": 10.0,
+            "ctrl": {
+                "flag": ctrl_flag
+            },
+            "DirtTemperature": 10.0,
+            "DirtHumidity": 10.0,
+            "timestamp": epoch,
+            "delta_t": delta_t,
+            "consoleLog": [],
+
+        }
+        requests.post(telemetry_server + telemetry_uri, json=motor_data)
+        time.sleep(0.2)
+
+
+def scheduleTelemetryTaskProcess():
+    p = Process(target=telemetryTask)
+    p.start()
+
+
 ctrl_flag = 0  # 0: unoccupied, 1: system, 2: user (joystick)
 ctrl_valid_until = 0
 ctrl_user_timeout_millis = 5000
@@ -105,6 +160,7 @@ wheel_distance_from_center = math.sqrt(rover_width ** 2 + rover_height ** 2) / 2
 try:
     rospy.init_node("ozurover-locomotion", anonymous=True)
     subscription = rospy.Subscriber("/joy", Joy, joy_callback)
+    scheduleTelemetryTaskProcess()
     with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=1) as motor1:
         with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=2) as motor2:
             with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
