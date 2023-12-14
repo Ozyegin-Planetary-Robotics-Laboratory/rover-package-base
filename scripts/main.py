@@ -161,7 +161,6 @@ wheel_distance_from_center = math.sqrt(rover_width ** 2 + rover_height ** 2) / 2
 
 try:
     rospy.init_node("ozurover-locomotion", anonymous=True)
-    subscription = rospy.Subscriber("joy", Joy, joy_callback)
     with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=1) as motor1:
         with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=2) as motor2:
             with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
@@ -169,6 +168,7 @@ try:
                     motor_collection = [motor1, motor2, motor3, motor4]  # R, L, R, L
                     if telemetry_enabled:
                         scheduleTelemetryTaskProcess(motor_collection)
+                    rospy.Subscriber("/joy", Joy, joy_callback)
                     for motor in motor_collection:
                         motor.enter_velocity_control()
                     while rospy.is_shutdown() is False:
