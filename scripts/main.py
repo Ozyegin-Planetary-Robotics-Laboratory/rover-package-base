@@ -52,7 +52,7 @@ def joy_callback(data):
     rotation = data.axes[0]
     speed = data.axes[1]
     valid_until = current_millis + state_timeout_millis
-    emit(MotorControlState(rotation, speed, valid_until))
+    emit(MotorControlState(rotation / 32768.0, speed / 32768.0, valid_until))
     print(rotation, speed, valid_until)
 
 
@@ -104,15 +104,14 @@ def get_motor_state_map(motor):
             "temperature": float(motor.temperature)}
 
 
-def get_motor_collection_state():
-    global motor_collection
+def get_motor_collection_state(motor_collection):
     state_map = []
     for i, m in enumerate(motor_collection):
         state_map += get_motor_state_map(m)
     return state_map
 
 
-def telemetryTask():
+def telemetryTask(motor_collection):
     global telemetry_uri
     global telemetry_server
     global start_millis
@@ -121,7 +120,7 @@ def telemetryTask():
         epoch = millis()
         delta_t = epoch - start_millis
         motor_data = {
-            "LocoMotorData": get_motor_collection_state(),
+            "LocoMotorData": get_motor_collection_state(motor_collection),
             "Mode": "idle",
             "InitialModeIndex": 0,
             "Connected": True,
@@ -140,8 +139,8 @@ def telemetryTask():
         time.sleep(0.2)
 
 
-def scheduleTelemetryTaskProcess():
-    p = Process(target=telemetryTask)
+def scheduleTelemetryTaskProcess(motor_collection):
+    p = Process(target=telemetryTask, args=[motor_collection])
     p.start()
 
 
@@ -160,12 +159,12 @@ wheel_distance_from_center = math.sqrt(rover_width ** 2 + rover_height ** 2) / 2
 try:
     rospy.init_node("ozurover-locomotion", anonymous=True)
     subscription = rospy.Subscriber("/joy", Joy, joy_callback)
-    scheduleTelemetryTaskProcess()
     with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=1) as motor1:
         with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=2) as motor2:
             with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
                 with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=4) as motor4:
                     motor_collection = [motor1, motor2, motor3, motor4]  # R, L, R, L
+                    scheduleTelemetryTaskProcess(motor_collection)
                     for motor in motor_collection:
                         motor.enter_velocity_control()
                     while rospy.is_shutdown() is False:
