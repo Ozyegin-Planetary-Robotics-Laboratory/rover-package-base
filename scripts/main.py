@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Not necessary?
 # from typing import Required
 import sys
