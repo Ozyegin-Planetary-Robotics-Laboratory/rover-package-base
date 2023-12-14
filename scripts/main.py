@@ -46,6 +46,7 @@ def joy_callback(data):
     global ctrl_flag
     global ctrl_valid_until
     global ctrl_user_timeout_millis
+    print("Joy callback {} {}", data.axes[0], data.axes[1])
     current_millis = millis()
     ctrl_flag = 2
     ctrl_valid_until = current_millis + ctrl_user_timeout_millis
