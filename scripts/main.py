@@ -85,10 +85,10 @@ def calculate_velocity_targets(rotation, speed):
 
 def update_motor_collection(motor_collection, state):
     velocities = calculate_velocity_targets(state.rotation, state.speed)
-    motor_collection[0].set_velocity(velocities[0])
-    motor_collection[1].set_velocity(velocities[1])
-    motor_collection[2].set_velocity(velocities[0])
-    motor_collection[3].set_velocity(velocities[1])
+    motor_collection[0].velocity = velocities[0]
+    motor_collection[1].velocity = velocities[1]
+    motor_collection[2].velocity = velocities[0]
+    motor_collection[3].velocity = velocities[1]
     for motor in motor_collection:
         motor.update()
 
