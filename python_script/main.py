@@ -1,8 +1,8 @@
+# Not necessary?
+# from typing import Required
 import sys
 import time
 import math
-from typing import Required
-
 import requests
 from TMotorCANControl.servo_can import TMotorManager_servo_can
 import rospy
