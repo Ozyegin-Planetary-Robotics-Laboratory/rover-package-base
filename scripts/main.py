@@ -12,6 +12,7 @@ from sensor_msgs.msg import Joy
 
 telemetry_server = "localhost:8080"
 telemetry_uri = "/rover-data"
+telemetry_enabled = False
 
 
 class MotorControlState:
@@ -165,7 +166,8 @@ try:
             with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
                 with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=4) as motor4:
                     motor_collection = [motor1, motor2, motor3, motor4]  # R, L, R, L
-                    scheduleTelemetryTaskProcess(motor_collection)
+                    if telemetry_enabled:
+                        scheduleTelemetryTaskProcess(motor_collection)
                     for motor in motor_collection:
                         motor.enter_velocity_control()
                     while rospy.is_shutdown() is False:
