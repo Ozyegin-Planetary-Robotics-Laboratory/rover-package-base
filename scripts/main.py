@@ -54,7 +54,7 @@ def joy_callback(data):
     rotation = data.axes[0]
     speed = data.axes[1]
     valid_until = current_millis + state_timeout_millis
-    emit(MotorControlState(rotation / 32768.0, speed / 32768.0, valid_until))
+    emit(MotorControlState(rotation, speed, valid_until))
     print(rotation, speed, valid_until)
 
 
