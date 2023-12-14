@@ -58,8 +58,8 @@ jobs:
         run: cp -r ./ /home/exo/catkin_ws/src/${{steps.package_name.outputs.substring}}
 
       - name: Install PIP dependencies
-        working-directory: /home/exo/catkin_ws/src/locomotion
-        run: pip install -r requirements.txt
+        working-directory: /home/exo/catkin_ws/src/ozurover-locomotion
+        run: python3 -m pip install -r requirements.txt
         shell: bash
 
       - name: Build
