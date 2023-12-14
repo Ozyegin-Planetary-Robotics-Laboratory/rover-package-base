@@ -64,5 +64,5 @@ jobs:
 
       - name: Build
         working-directory: /home/exo/catkin_ws
-        run: source /opt/ros/melodic/setup.bash && source /home/exo/catkin_ws/devel/setup.bash && catkin_make --only-pkg-with-deps ${{steps.package_name.outputs.substring}}
+        run: source ~/.bashrc && source /opt/ros/melodic/setup.bash && source /home/exo/catkin_ws/devel/setup.bash && catkin_make --only-pkg-with-deps ${{steps.package_name.outputs.substring}}
         shell: bash

@@ -161,7 +161,7 @@ wheel_distance_from_center = math.sqrt(rover_width ** 2 + rover_height ** 2) / 2
 
 try:
     rospy.init_node("ozurover-locomotion", anonymous=True)
-    subscription = rospy.Subscriber("/joy", Joy, joy_callback)
+    subscription = rospy.Subscriber("joy", Joy, joy_callback)
     with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=1) as motor1:
         with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=2) as motor2:
             with TMotorManager_servo_can(motor_type='AK70-10', motor_ID=3) as motor3:
