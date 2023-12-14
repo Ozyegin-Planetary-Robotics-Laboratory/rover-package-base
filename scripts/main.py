@@ -69,8 +69,8 @@ def msg_callback(data):
     ctrl_flag = 1
     global state
     global state_timeout_millis
-    rotation = data.axes[0]
-    speed = data.axes[1]
+    rotation = data.axes[1]
+    speed = data.axes[0]
     valid_until = current_millis + state_timeout_millis
     emit(MotorControlState(rotation, speed, valid_until))
     print(rotation, speed, valid_until)
@@ -78,9 +78,9 @@ def msg_callback(data):
 
 def calculate_velocity_targets(rotation, speed):
     # Rover width: 64cm, wheel diameter: 30cm, distance between two wheels at the same side: 96cm
-    velocity_diff = 0# math.tan(rotation) * speed
+    velocity_diff = math.tan(rotation) * speed
     velocity_left_group = (speed + (velocity_diff / 2))
-    velocity_right_group = -velocity_diff + velocity_left_group
+    velocity_right_group = +velocity_diff - velocity_left_group
     return [velocity_right_group, velocity_left_group]
 
 
