@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ozurover-locomotion</name>
+  <name>ozurover_locomotion</name>
   <version>0.0.0</version>
   <description>The locomotion package</description>
 
