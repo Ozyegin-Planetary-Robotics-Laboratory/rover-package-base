@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import rospy
 from ozurover_messages.msg import GPS, Abort, AddMarker
 from ozurover_messages.srv import GoalEnqueue, GoalAbort
-
+from threading import Thread
 app = Flask(__name__)
 
 # Initialize ROS node
