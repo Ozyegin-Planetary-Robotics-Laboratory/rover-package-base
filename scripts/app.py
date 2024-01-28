@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import rospy
-from ozurover_messages.msg import GPS, Abort, AddMarker
-from ozurover_messages.srv import GoalEnqueue, GoalAbort
+from ozurover_messages.msg import GPS
+from ozurover_messages.srv import AddMarker, Abort
 from threading import Thread
 
 app = Flask(__name__)
@@ -17,34 +17,30 @@ def enqueue_goal():
     data = request.json
     requestMsg = AddMarker()
     requestMsg.gps = GPS()
-    requestMsg.gps.latitude = data['gps'][0]
-    requestMsg.gps.longitude = data['gps'][1]
-    requestMsg.type = data['type']
+    requestMsg.gps.latitude = float(data['gps'][0])
+    requestMsg.gps.longitude = float(data['gps'][1])
+    requestMsg.type = int(data['type'])
 
     # Send ROS service request to /ares/goal/enqueue
     rospy.wait_for_service('/ares/goal/enqueue')
     try:
-        goal_enqueue = rospy.ServiceProxy('/ares/goal/enqueue', GoalEnqueue)
+        goal_enqueue = rospy.ServiceProxy('/ares/goal/enqueue', AddMarker)
         response = goal_enqueue(requestMsg)
-        success = response.success
+        return jsonify(success=True)
     except rospy.ServiceException as e:
         print("Service call failed: %s" % e)
-        success = False
-    
-    return jsonify(success=success)
+        return jsonify(success=False)
 
 @app.route('/goal/abort', methods=['POST'])
 def abort_goal():
     rospy.wait_for_service('/ares/goal/abort')
     try:
-        goal_abort = rospy.ServiceProxy('/ares/goal/abort', GoalAbort)
+        goal_abort = rospy.ServiceProxy('/ares/goal/abort', Abort)
         response = goal_abort()  # No arguments needed for the service call
-        success = response.success  
+        return jsonify(success=True)
     except rospy.ServiceException as e:
         print("Service call failed: %s" % e)
-        success = False
-    
-    return jsonify(success=success)
+        return jsonify(success=False)
 
 def read_base_gps_coordinates():
     try:
