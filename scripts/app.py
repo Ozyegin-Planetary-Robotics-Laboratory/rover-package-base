@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import rospy
-from ozurover_messages.msg import GPS
-from ozurover_messages.srv import AddMarker, Abort
+from ozurover_messages.msg import *
+from ozurover_messages.srv import *
 from threading import Thread
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ rover_gps_coordinates = [0, 0]  # Default latitude and longitude
 @app.route('/goal/enqueue', methods=['POST'])
 def enqueue_goal():
     data = request.json
-    requestMsg = AddMarker()
+    requestMsg = AddMarkerRequest()
     requestMsg.gps = GPS()
     requestMsg.gps.latitude = float(data['gps'][0])
     requestMsg.gps.longitude = float(data['gps'][1])
@@ -27,7 +27,7 @@ def enqueue_goal():
         goal_enqueue = rospy.ServiceProxy('/ares/goal/enqueue', AddMarker)
         response = goal_enqueue(requestMsg)
         return jsonify(success=True)
-    except rospy.ServiceException as e:
+    except rospy.ServiceException and TypeError as e:
         print("Service call failed: %s" % e)
         return jsonify(success=False)
 
