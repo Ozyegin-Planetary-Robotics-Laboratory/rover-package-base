@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import rospy
 from ozurover_messages.msg import *
 from ozurover_messages.srv import *
 from threading import Thread
 
+
 app = Flask(__name__)
+CORS(app)
 
 # Initialize ROS node
 rospy.init_node('flask_ros_bridge', anonymous=True)
@@ -15,6 +18,10 @@ rover_gps_coordinates = [0, 0]  # Default latitude and longitude
 @app.route('/goal/enqueue', methods=['POST'])
 def enqueue_goal():
     data = request.json
+    if 'gps' not in data or 'type' not in data:
+        print("Invalid request data")
+        return jsonify(success=False)
+    
     requestMsg = AddMarkerRequest()
     requestMsg.gps = GPS()
     requestMsg.gps.latitude = float(data['gps'][0])
