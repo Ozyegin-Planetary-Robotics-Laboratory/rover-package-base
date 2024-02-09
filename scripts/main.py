@@ -2,6 +2,7 @@
 # Not necessary?
 # from typing import Required
 import sys
+
 import time
 import math
 import requests
@@ -173,7 +174,7 @@ try:
                         motor.enter_velocity_control()
                     while rospy.is_shutdown() is False:
                         tick(motor_collection)
-
                         time.sleep(0.02)
+                        
 except KeyboardInterrupt:
     sys.exit(0)

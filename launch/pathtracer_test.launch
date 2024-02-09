@@ -1,0 +1,8 @@
+<launch>
+    <!-- Launch the path tracer node -->
+    <node pkg="ozurover_locomotion" type="pathtracer" name="pathtracer_node" output="screen" />
+    <!-- Launch the path tester node -->
+    <node pkg="ozurover_locomotion" type="path_tester" name="path_tester_node" output="screen" />
+    <!-- Launch RViz -->
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" />
+</launch>
