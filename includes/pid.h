@@ -25,11 +25,6 @@ SOFTWARE. */
 
 typedef struct {
 
-	/* Controller gains */
-	float Kp;
-	float Ki;
-	float Kd;
-
 	/* Derivative low-pass filter time constant */
 	float tau;
 
@@ -55,7 +50,8 @@ typedef struct {
 
 } PIDController;
 
-void  PIDController_Init(PIDController *pid);
-float PIDController_Update(PIDController *pid, float setpoint, float measurement);
+void  PIDController_Reset(PIDController *pid);
+void  PIDController_Init(PIDController *pid, float T);
+float PIDController_Update(PIDController *pid, float setpoint, float measurement, float kp, float ki, float kd);
 
 #endif

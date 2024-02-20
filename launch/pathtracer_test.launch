@@ -1,8 +1,16 @@
 <launch>
+    <!-- Launch the server node -->
+    <node pkg="server_node" type="server_node" name="server_node" output="screen"/>
+    <!-- Launch the pathfinder node -->
+    <node pkg="ozurover_control" type="pathfinding_node" name="pathfinding_node" output="screen" />
+    <!-- Launch the tf pub node -->
+    <node pkg="ozurover_locomotion" type="tf_pub" name="tf_pub_node" output="screen" />
+    <!-- Launch the tester node -->
+    <node pkg="ozurover_locomotion" type="tester" name="tester_node" output="screen" /> 
     <!-- Launch the path tracer node -->
-    <node pkg="ozurover_locomotion" type="pathtracer" name="pathtracer_node" output="screen" />
-    <!-- Launch the path tester node -->
-    <node pkg="ozurover_locomotion" type="path_tester" name="path_tester_node" output="screen" />
+    <node pkg="ozurover_locomotion" type="pathtracer" name="pathtracer_node" output="screen" /> 
     <!-- Launch RViz -->
-    <node pkg="rviz" type="rviz" name="rviz" output="screen" />
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find ozurover_locomotion)/rviz/pid.rviz"/>
+    <!-- Launch RQT GUI -->
+    <node pkg="rqt_gui" type="rqt_gui" name="rqt_gui" output="screen" />
 </launch>

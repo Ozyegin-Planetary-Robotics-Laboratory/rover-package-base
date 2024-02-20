@@ -1,6 +1,14 @@
 #include "../includes/pid.h"
 
-void PIDController_Init(PIDController *pid) {
+void  PIDController_Reset(PIDController *pid) {
+  pid->integrator = 0.0f;
+  pid->prevError  = 0.0f;
+  pid->differentiator  = 0.0f;
+  pid->prevMeasurement = 0.0f;
+  pid->out = 0.0f;
+}
+
+void PIDController_Init(PIDController *pid, float T) {
   /* Clear controller variables */
   pid->integrator = 0.0f;
   pid->prevError  = 0.0f;
@@ -8,10 +16,9 @@ void PIDController_Init(PIDController *pid) {
   pid->prevMeasurement = 0.0f;
   pid->out = 0.0f;
 
-  /* Set controller gains */
-  pid->Kp = 1.0f;
-  pid->Ki = 0.0f;
-  pid->Kd = 0.0f;
+  /* Set controller time constants */
+  pid->T = T;
+  pid->tau = 0.1f;
 
   /* Set controller limits */
   pid->limMin = -360.0f;
@@ -20,7 +27,7 @@ void PIDController_Init(PIDController *pid) {
   pid->limMaxInt = 1000.0f;
 }
 
-float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
+float PIDController_Update(PIDController *pid, float setpoint, float measurement, float kp, float ki, float kd) {
   /*
   * Error signal
   */
@@ -28,11 +35,11 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
   /*
   * Proportional
   */
-  float proportional = pid->Kp * error;
+  float proportional = kp * error;
   /*
   * Integral
   */
-  pid->integrator = pid->integrator + 0.5f * pid->Ki * pid->T * (error + pid->prevError);
+  pid->integrator = pid->integrator + 0.5f * ki * pid->T * (error + pid->prevError);
   /* Anti-wind-up via integrator clamping */
   if (pid->integrator > pid->limMaxInt) {
       pid->integrator = pid->limMaxInt;
@@ -42,7 +49,7 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
   /*
   * Derivative (band-limited differentiator)
   */
-  pid->differentiator = -(2.0f * pid->Kd * (measurement - pid->prevMeasurement)	/* Note: derivative on measurement, therefore minus sign in front of equation! */
+  pid->differentiator = -(2.0f * kd * (measurement - pid->prevMeasurement)	/* Note: derivative on measurement, therefore minus sign in front of equation! */
                       + (2.0f * pid->tau - pid->T) * pid->differentiator)
                       / (2.0f * pid->tau + pid->T);
   /*

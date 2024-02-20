@@ -17,8 +17,10 @@ find_package(catkin REQUIRED COMPONENTS
   ozurover_messages
   geometry_msgs
   sensor_msgs
+  std_srvs
   nav_msgs
   std_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -96,10 +98,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
+generate_dynamic_reconfigure_options(
+    cfg/PathtracerPID.cfg
 #   cfg/DynReconf2.cfg
-# )
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -146,6 +148,16 @@ include_directories(
 
 add_executable(pathtracer src/pid.cpp src/Pathtracer.cpp)
 target_link_libraries(pathtracer ${catkin_LIBRARIES})
+add_dependencies(pathtracer ${catkin_EXPORTED_TARGETS})
+add_dependencies(pathtracer ${PROJECT_NAME}_gencfg)
+
+add_executable(tester src/Tester.cpp)
+target_link_libraries(tester ${catkin_LIBRARIES})
+add_dependencies(tester ${catkin_EXPORTED_TARGETS})
+
+add_executable(tf_pub src/rovertfpub.cpp)
+target_link_libraries(tf_pub ${catkin_LIBRARIES})
+add_dependencies(tf_pub ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
